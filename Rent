@@ -1,0 +1,9 @@
+You want to rent an apartment and have the following table named Apartments.  
+Write a query to output the apartments whose prices are greater than the average and are also not rented, sorted by the 'Price' column.
+
+Answer:
+
+SELECT id, city, address, price, status
+FROM apartments 
+WHERE price >(SELECT AVG (price) FROM apartments  )
+ORDER by price ASC;
