@@ -1,0 +1,35 @@
+/*The queries below are from a project on codecademy called "Book Store Indexes".  The customers, order, books tables were already created by codecademy*/
+
+SELECT * FROM customers /* shows the first 10 rows of customers table */
+LIMIT 10;
+
+SELECT * FROM orders /* shows the first 10 rows of orders table */
+LIMIT 10;
+
+SELECT * FROM books /* shows the first 10 rows of books table */
+LIMIT 10;
+
+CREATE INDEX orders_customer_id_book_id_idx ON orders(customer_id, book_id); /* creates an index for customer_id and book_id on orders table */
+
+EXPLAIN ANALYZE SELECT original_language, title, sales_in_millions FROM books
+WHERE original_language = 'French'; /*checks the runtime for searching original_language, title, and sale_in_millions from the books table where the original language is french*/
+
+SELECT pg_size_pretty(pg_total_relation_size('books')); /*query to show the size of the books table*/
+
+CREATE INDEX books_original_language_title_sales_in_millions_idx ON books(original_language, title, sales_in_millions); /* creates an index for original langauge, title, and sales in millions on books table */
+
+EXPLAIN ANALYZE SELECT original_language, title, sales_in_millions FROM books;/*runtime longer after creating the index*/
+
+DROP INDEX IF EXISTS books_original_language_title_sales_in_millions_idx;/*deletes the index*/
+
+SELECT NOW();
+ 
+\COPY orders FROM 'orders_add.txt' DELIMITER ',' CSV HEADER;
+ 
+SELECT NOW();/*performs a bulk insert*/
+
+DROP INDEX IF EXISTS orders_customer_id_book_id_idx;
+
+CREATE INDEX orders_customer_id_book_id_idx ON orders(customer_id, book_id);
+
+CREATE INDEX customers_first_name_email_address ON customers(first_name, email_address);
