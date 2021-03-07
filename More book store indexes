@@ -1,0 +1,66 @@
+/*The queries below are from a project on codecademy called "Intermediate Book Store Indexes".  The customers, order, books tables were already created by codecademy*/
+
+SELECT * FROM customers /* shows the first 10 rows of customers table */
+LIMIT 10;
+
+SELECT * FROM orders /* shows the first 10 rows of orders table */
+LIMIT 10;
+
+SELECT * FROM books /* shows the first 10 rows of books table */
+LIMIT 10;
+
+SELECT * FROM pg_Indexes; /*query that shows all the indexes from table customers, orders, books*/
+
+EXPLAIN ANALYZE SELECT customer_id, quantity FROM orders
+WHERE quantity > 18; /*checks the runtime for customer_id and quantity where quantity is greater than 18*/
+
+CREATE INDEX orders_customer_id_quantity_idx ON orders(customer_id, quantity)
+WHERE quantity > 18; /* new index for customer _id and quantity on the orders table*/
+
+EXPLAIN ANALYZE SELECT customer_id, quantity FROM orders
+WHERE quantity > 18;/*re-evaluate the runtime after new index is created*/
+
+ALTER TABLE customers
+ADD CONSTRAINT customers_pkey
+PRIMARY KEY(customer_id); /*query that adds primary key and constraint to customer table column customer_id*/
+
+EXPLAIN ANALYZE SELECT * FROM customers
+WHERE customer_id < 100; /*checks the runtime for customer_id where customer_id is less than 100*/
+
+CREATE INDEX customers_customer_id_idx ON customers(customer_id);/*new index for customer_id on customers table*/
+
+CLUSTER customers USING customers_customer_id_idx;
+SELECT * FROM customers /* shows the first 10 rows of customers table */
+LIMIT 10;
+
+CREATE INDEX order_customer_id_book_id_idx ON orders(customer_id, book_id);/*creates new index*/
+
+DROP INDEX IF EXISTS order_customer_id_book_id_idx;/* drops index created in the previous line*/
+
+CREATE INDEX order_customer_id_book_id_quantity_idx on orders(customer_id, book_id, quantity);/*creates new index*/
+
+CREATE INDEX books_author_title_idx ON books(author, title);/*creates a new index*/
+
+EXPLAIN ANALYZE SELECT quantity, price_base FROM orders
+WHERE (quantity * price_base) > 100;/*checks the runtime for quantity and price base in orders table where (quantity * price_base) is greater than 100*/
+
+CREATE INDEX orders_quantity_price_base_idx ON orders(quantity, price_base)
+WHERE (quantity * price_base) > 100;/*creates a new index*/
+
+EXPLAIN ANALYZE SELECT quantity, price_base FROM orders
+WHERE (quantity * price_base) > 100;/*re_evaluates the runtime for quantity and price base in orders table where (quantity * price_base) is greater than 100*/
+
+SELECT *
+FROM pg_indexes
+WHERE tablename IN ('customers', 'books', 'orders')
+ORDER BY tablename, indexname; /*shows what indexes exist.  Then orders them first by table and then by index*/
+
+DROP INDEX IF EXISTS books_author_idx;/* drops the index */
+DROP INDEX IF EXISTS orders_customer_id_quantity_idx;/* drops the index */
+
+CREATE INDEX customers_last_name_first_name_email_address ON customers (last_name, first_name, email_address);/*creates a new index*/
+
+SELECT *
+FROM pg_indexes
+WHERE tablename IN ('customers', 'books', 'orders')
+ORDER BY tablename, indexname;/*shows what indexes exist.  Then orders them first by table and then by index*/
